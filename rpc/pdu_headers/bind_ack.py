@@ -2,8 +2,11 @@ from dataclasses import dataclass, field
 from typing import ClassVar, Optional, Dict
 from struct import pack as struct_pack, unpack as struct_unpack
 
-from rpc.structures.pdu_type import PDUType
 from rpc.pdu_headers.base import MSRPCHeader
+from rpc.structures.pdu_type import PDUType
+from rpc.structures.port_any import PortAny
+from rpc.structures.result_list import ResultList
+from rpc.structures.auth_verifier import AuthVerifier
 
 
 @dataclass
