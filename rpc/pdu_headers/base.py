@@ -84,6 +84,7 @@ class MSRPCHeader(ABC):
             if pdu_type != cls.pdu_type:
                 # TODO: Use proper exception.
                 raise ValueError
+            return cls._from_bytes_and_parameters(data=data, base_parameters=base_parameters)
         else:
             return cls.pdu_type_to_class[pdu_type]._from_bytes_and_parameters(
                 data=data,
