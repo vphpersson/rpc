@@ -9,8 +9,8 @@ from rpc.structures.auth_verifier import AuthVerifier
 
 
 @dataclass
-class RequestHeader(MSRPCHeader):
-    pdu_type: ClassVar[PDUType] = PDUType.REQUEST
+class ResponseHeader(MSRPCHeader):
+    pdu_type: ClassVar[PDUType] = PDUType.RESPONSE
     structure_size: ClassVar[int] = MSRPCHeader.structure_size + 8
     _reserved: ClassVar[bytes] = bytes(1)
 
@@ -33,7 +33,7 @@ class RequestHeader(MSRPCHeader):
         return len(self.auth_verifier) if self.auth_verifier is not None else 0
 
     @classmethod
-    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, Any]) -> RequestHeader:
+    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, Any]) -> ResponseHeader:
 
         header_specific_data = data[MSRPCHeader.structure_size:]
 
