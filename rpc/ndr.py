@@ -6,7 +6,7 @@ from struct import unpack as struct_unpack, pack as struct_pack
 
 
 def generate_referent_id():
-    yield from range(2**32 - 1)
+    yield from range(1, 2**32 - 1)
 
 
 class NDRType(ABC):
@@ -76,7 +76,7 @@ class NDRUnion(NDRType):
 @dataclass
 class Pointer(NDRType):
     representation: Union[NDRType, bytes]
-    referent_id: int = field(default_factory=lambda: next(super()._referent_id_generator))
+    referent_id: int = field(default_factory=lambda: next(NDRType._referent_id_generator))
 
     @classmethod
     def from_bytes(cls, data: bytes) -> Pointer:
