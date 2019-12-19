@@ -45,10 +45,10 @@ class RequestHeader(MSRPCHeader):
 
         if PfcFlag.PFC_OBJECT_UUID in base_parameters['pfc_flags']:
             object_uuid = UUID(bytes_le=header_specific_data[8:24])
-            stub_data = header_specific_data[24:-auth_length]
+            stub_data = header_specific_data[24:(-auth_length or None)]
         else:
             object_uuid = None
-            stub_data = header_specific_data[8:-auth_length]
+            stub_data = header_specific_data[8:(-auth_length or None)]
 
         return cls(
             **base_parameters,
