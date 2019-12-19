@@ -1,4 +1,23 @@
+from __future__ import annotations
 from dataclasses import dataclass
+from struct import unpack as struct_unpack, pack as struct_pack
+from enum import IntEnum
+from typing import Optional
+
+from rpc.structures.presentation_syntax import PresentationSyntax
+
+
+class ContDefResult(IntEnum):
+    ACCEPTANCE = 0
+    USER_REJECTION = 1
+    PROVIDER_REJECTION = 2
+
+
+class ProviderReason(IntEnum):
+    REASON_NOT_SPECIFIED = 0
+    ABSTRACT_SYNTAX_NOT_SUPPORTED = 1
+    PROPOSED_TRANSFER_SYNTAXES_NOT_SUPPORTED = 2
+    LOCAL_LIMIT_EXCEEDED = 3
 
 
 @dataclass
