@@ -20,7 +20,7 @@ class NDRType(ABC):
 
 # TODO: The string encoding should be whatever the data representation format label says, no?
 class ConformantVaryingString(NDRType):
-    def __init__(self, representation: str, offset: int = 0, maximum_count: Optional[int] = None):
+    def __init__(self, representation: str = '', offset: int = 0, maximum_count: Optional[int] = None):
         self.representation: str = representation
         self.offset: int = offset
         self._maximum_count: Optional[int] = maximum_count
