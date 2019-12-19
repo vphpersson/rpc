@@ -74,6 +74,7 @@ class MSRPCHeader(ABC):
         from rpc.pdu_headers.bind import BindHeader
         from rpc.pdu_headers.bind_ack import BindAckHeader
         from rpc.pdu_headers.request_header import RequestHeader
+        from rpc.pdu_headers.response_header import ResponseHeader
 
         base_parameters: Dict[str, Union[int, PDUType, PfcFlag, DataRepresentationFormat]] = cls._from_bytes(
             data=data
