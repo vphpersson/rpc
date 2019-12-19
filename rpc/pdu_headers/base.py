@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Dict, Union
+from typing import ClassVar, Dict, Union, Type, Any
 from abc import ABC, abstractmethod
 from struct import unpack as struct_unpack, pack as struct_pack
 
@@ -13,6 +13,7 @@ from rpc.structures.data_representation_format import DataRepresentationFormat, 
 @dataclass
 class MSRPCHeader(ABC):
     pdu_type: ClassVar[PDUType] = NotImplemented
+    pdu_type_to_class: ClassVar[Dict[PDUType, Type[MSRPCHeader]]] = {}
     structure_size: ClassVar[int] = 16
 
     rpc_vers: int = 5
@@ -61,18 +62,35 @@ class MSRPCHeader(ABC):
             struct_pack('<I', self.call_id)
         ])
 
+    @abstractmethod
+    def _from_bytes_and_parameters(self, data: bytes, base_parameters: Dict[str, Any]):
+        raise NotImplementedError
+
     # TODO: Use dict method to find proper subtype.
 
     @classmethod
     def from_bytes(cls, data: bytes) -> MSRPCHeader:
 
-        base_header_parameters: Dict[str, Union[int, PDUType, PfcFlag, DataRepresentationFormat]] = cls._from_bytes(
+        from rpc.pdu_headers.bind import BindHeader
+        from rpc.pdu_headers.bind_ack import BindAckHeader
+        from rpc.pdu_headers.request_header import RequestHeader
+
+        base_parameters: Dict[str, Union[int, PDUType, PfcFlag, DataRepresentationFormat]] = cls._from_bytes(
             data=data
         )
+        pdu_type = base_parameters.pop('pdu_type')
 
-        pdu_type = base_header_parameters.pop('pdu_type')
+        if cls != MSRPCHeader:
+            if pdu_type != cls.pdu_type:
+                # TODO: Use proper exception.
+                raise ValueError
+        else:
+            return cls.pdu_type_to_class[pdu_type]._from_bytes_and_parameters(
+                data=data,
+                base_parameters=base_parameters
+            )
 
-        if pdu_type is PDUType.BIND:
-            return BindHeader._from_bytes_and_parameters(data=data, base_parameters=base_header_parameters)
-        elif pdu_type is PDUType.BIND_ACK:
-            return BindAckHeader._from_bytes_and_parameters(data=data, base_parameters=base_header_parameters)
+
+def register_pdu_header(cls: Type[MSRPCHeader]):
+    cls.pdu_type_to_class[cls.pdu_type] = cls
+    return cls
