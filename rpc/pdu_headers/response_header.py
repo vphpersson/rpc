@@ -44,7 +44,7 @@ class ResponseHeader(MSRPCHeader):
             **base_parameters,
             alloc_hint=struct_unpack('<I', header_specific_data[:4])[0],
             context_id=struct_unpack('<H', header_specific_data[4:6])[0],
-            cancel_count=struct_pack('<B', header_specific_data[6:7])[0],
+            cancel_count=struct_unpack('<B', header_specific_data[6:7])[0],
             stub_data=header_specific_data[8:(-auth_length or None)],
             auth_verifier=(
                 AuthVerifier.from_bytes(data=header_specific_data[-auth_length:])
