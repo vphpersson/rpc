@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import ClassVar
 from uuid import UUID
-from struct import  pack as struct_pack, unpack as struct_unpack
+from struct import pack as struct_pack, unpack as struct_unpack
 
 
 @dataclass

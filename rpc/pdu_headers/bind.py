@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, ClassVar, Dict
+from typing import Optional, ClassVar, Dict, Any
 from struct import unpack as struct_unpack, pack as struct_pack
 
 from rpc.pdu_headers.base import MSRPCHeader
@@ -33,7 +33,7 @@ class BindHeader(MSRPCHeader):
 
     # TODO: Add type.
     @classmethod
-    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, ...]):
+    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, Any]):
 
         header_specific_data = data[MSRPCHeader.structure_size:]
 

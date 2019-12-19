@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import ClassVar, Optional, Dict
+from typing import ClassVar, Optional, Dict, Any
 from struct import pack as struct_pack, unpack as struct_unpack
 
 from rpc.pdu_headers.base import MSRPCHeader
@@ -44,7 +44,7 @@ class BindAckHeader(MSRPCHeader):
         return len(self.auth_verifier) if self.auth_verifier is not None else 0
 
     @classmethod
-    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, ...]):
+    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, Any]):
 
         header_specific_data = data[MSRPCHeader.structure_size:]
 

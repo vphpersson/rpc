@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Final, Iterable, List
 from struct import pack as struct_pack, unpack as struct_unpack
 
+from rpc.structures.context_element import ContextElement
+
 
 # TODO: Should this be a `tuple`?
 class ContextList(list):
