@@ -2,13 +2,14 @@ from dataclasses import dataclass, field
 from typing import Optional, ClassVar, Dict, Any
 from struct import unpack as struct_unpack, pack as struct_pack
 
-from rpc.pdu_headers.base import MSRPCHeader
+from rpc.pdu_headers.base import MSRPCHeader, register_pdu_header
 from rpc.structures.auth_verifier import AuthVerifier
 from rpc.structures.context_list import ContextList
 from rpc.structures.pdu_type import PDUType
 
 
 @dataclass
+@register_pdu_header
 class BindHeader(MSRPCHeader):
     pdu_type: ClassVar[PDUType] = PDUType.BIND
     structure_size: ClassVar[int] = MSRPCHeader.structure_size + 8

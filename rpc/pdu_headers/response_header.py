@@ -3,12 +3,13 @@ from dataclasses import dataclass
 from typing import ClassVar, Optional, Dict, Any
 from struct import unpack as struct_unpack, pack as struct_pack
 
-from rpc.pdu_headers.base import MSRPCHeader
+from rpc.pdu_headers.base import MSRPCHeader, register_pdu_header
 from rpc.structures.pdu_type import PDUType
 from rpc.structures.auth_verifier import AuthVerifier
 
 
 @dataclass
+@register_pdu_header
 class ResponseHeader(MSRPCHeader):
     pdu_type: ClassVar[PDUType] = PDUType.RESPONSE
     structure_size: ClassVar[int] = MSRPCHeader.structure_size + 8

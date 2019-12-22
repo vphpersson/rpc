@@ -4,13 +4,14 @@ from typing import ClassVar, Optional, Dict, Any
 from uuid import UUID
 from struct import unpack as struct_unpack, pack as struct_pack
 
-from rpc.pdu_headers.base import MSRPCHeader
+from rpc.pdu_headers.base import MSRPCHeader, register_pdu_header
 from rpc.structures.pdu_type import PDUType
 from rpc.structures.auth_verifier import AuthVerifier
 from rpc.structures.pfc_flag import PfcFlag
 
 
 @dataclass
+@register_pdu_header
 class RequestHeader(MSRPCHeader):
     pdu_type: ClassVar[PDUType] = PDUType.REQUEST
     structure_size: ClassVar[int] = MSRPCHeader.structure_size + 8
