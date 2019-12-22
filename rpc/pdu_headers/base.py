@@ -24,7 +24,7 @@ class MSRPCHeader(ABC):
         integer_representation=IntegerRepresentation.LITTLE_ENDIAN,
         floating_point_representation=FloatingPointRepresentation.IEEE
     )
-    call_id: int = 1
+    call_id: int = 0
 
     @staticmethod
     def _from_bytes(data: bytes) -> Dict[str, Union[int, PDUType, PfcFlag, DataRepresentationFormat]]:

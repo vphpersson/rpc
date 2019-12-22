@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar, Optional, Dict, Any
 from struct import pack as struct_pack, unpack as struct_unpack
 
-from rpc.pdu_headers.base import MSRPCHeader
+from rpc.pdu_headers.base import MSRPCHeader, register_pdu_header
 from rpc.structures.pdu_type import PDUType
 from rpc.structures.port_any import PortAny
 from rpc.structures.result_list import ResultList
@@ -10,6 +10,7 @@ from rpc.structures.auth_verifier import AuthVerifier
 
 
 @dataclass
+@register_pdu_header
 class BindAckHeader(MSRPCHeader):
     pdu_type: ClassVar[PDUType] = PDUType.BIND_ACK
     structure_size: ClassVar[int] = MSRPCHeader.structure_size + 8
