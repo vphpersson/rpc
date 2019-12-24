@@ -1,17 +1,19 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from typing import Optional, Union
+from typing import Optional, Union, Iterator, Final, ClassVar
 from struct import unpack as struct_unpack, pack as struct_pack
+from uuid import UUID
+
+from rpc.structures.presentation_syntax import PresentationSyntax
 
 
-def generate_referent_id():
-    yield from range(1, 2**32 - 1)
+NDR_PRESENTATION_SYNTAX = PresentationSyntax(if_uuid=UUID('8a885d04-1ceb-11c9-9fe8-08002b104860'), if_version=2)
 
 
 class NDRType(ABC):
 
-    _referent_id_generator = generate_referent_id()
+    _referent_id_iterator: Final[Iterator[int]] = iter(range(1, 2**32 - 1))
 
     @abstractmethod
     def __bytes__(self) -> bytes:
@@ -76,7 +78,8 @@ class NDRUnion(NDRType):
 @dataclass
 class Pointer(NDRType):
     representation: Union[NDRType, bytes]
-    referent_id: int = field(default_factory=lambda: next(NDRType._referent_id_generator))
+    referent_id: int = field(default_factory=lambda: next(NDRType._referent_id_iterator))
+    structure_size: ClassVar[int] = 4
 
     @classmethod
     def from_bytes(cls, data: bytes) -> Pointer:
