@@ -4,6 +4,7 @@ from typing import ClassVar, Tuple, List
 from struct import pack as struct_pack, unpack as struct_unpack
 
 from rpc.structures.presentation_syntax import PresentationSyntax
+from rpc.ndr import NDR_PRESENTATION_SYNTAX
 
 
 @dataclass
@@ -13,7 +14,7 @@ class ContextElement:
 
     context_id: int
     abstract_syntax: PresentationSyntax
-    transfer_syntaxes: Tuple[PresentationSyntax, ...]
+    transfer_syntaxes: Tuple[PresentationSyntax, ...] = (NDR_PRESENTATION_SYNTAX, )
 
     @property
     def n_transfer_syn(self) -> int:
