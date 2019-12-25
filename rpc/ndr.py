@@ -29,7 +29,8 @@ class ConformantVaryingString(NDRType):
 
     @property
     def actual_count(self) -> int:
-        return len(self.representation.encode(encoding='utf-16-le') + 2 * b'\x00')
+        # Length of string plus a null byte
+        return len(self.representation) + 1
 
     @property
     def maximum_count(self) -> int:
