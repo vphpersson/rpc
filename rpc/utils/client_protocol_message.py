@@ -21,14 +21,14 @@ class ClientProtocolMessage(ABC):
         raise NotImplementedError
 
 
-class ClientProtocolRequest(ClientProtocolMessage, ABC):
+class ClientProtocolRequestBase(ClientProtocolMessage, ABC):
     OPERATION: IntEnum = NotImplemented
-    RESPONSE_CLASS: Type[ClientProtocolResponse] = NotImplemented
+    RESPONSE_CLASS: Type[ClientProtocolResponseBase] = NotImplemented
 
 
 @dataclass
-class ClientProtocolResponse(ClientProtocolMessage, ABC):
-    REQUEST_CLASS: ClassVar[Type[ClientProtocolRequest]] = NotImplemented
+class ClientProtocolResponseBase(ClientProtocolMessage, ABC):
+    REQUEST_CLASS: ClassVar[Type[ClientProtocolRequestBase]] = NotImplemented
     ERROR_CLASS: ClassVar[Type[ClientProtocolResponseError]] = NotImplemented
     return_code: IntEnum
 
@@ -38,20 +38,20 @@ class ClientProtocolResponseError(Exception, ABC):
     DESCRIPTION: str = NotImplemented
     RETURN_CODE_TO_ERROR_CLASS: Dict[IntEnum, Type[ClientProtocolResponseError]] = NotImplemented
 
-    def __init__(self, response: ClientProtocolResponse):
+    def __init__(self, response: ClientProtocolResponseBase):
         super().__init__(self.DESCRIPTION)
-        self.response: ClientProtocolResponse = response
+        self.response: ClientProtocolResponseBase = response
 
     @classmethod
-    def from_return_code(cls, return_code: IntEnum) -> ClientProtocolResponseError:
-        return cls.RETURN_CODE_TO_ERROR_CLASS[return_code]()
+    def from_response(cls, response: ClientProtocolResponseBase) -> ClientProtocolResponseError:
+        return cls.RETURN_CODE_TO_ERROR_CLASS[response.return_code](response=response)
 
 
 async def obtain_response(
     rpc_connection: RPCConnection,
-    request: ClientProtocolRequest,
+    request: ClientProtocolRequestBase,
     raise_exception: bool = True
-) -> ClientProtocolResponse:
+) -> ClientProtocolResponseBase:
     """
 
     :param rpc_connection: The RPC connection with which to send the message.
@@ -74,10 +74,13 @@ async def obtain_response(
         # TODO: Use proper exception.
         raise ValueError
 
-    client_protocol_response: ClientProtocolResponse = request.RESPONSE_CLASS.from_bytes(data=rpc_response.stub_data)
+    client_protocol_response: ClientProtocolResponseBase = request.RESPONSE_CLASS.from_bytes(data=rpc_response.stub_data)
+    if not isinstance(client_protocol_response, request.RESPONSE_CLASS):
+        # TODO: Use proper exception
+        raise ValueError
 
     # NOTE: It seems that I must use the integer value of the return code to have this function be general.
     if client_protocol_response.return_code.value != 0 and raise_exception:
-        raise client_protocol_response.ERROR_CLASS.from_return_code(return_code=client_protocol_response.return_code)
+        raise client_protocol_response.ERROR_CLASS.from_response(response=client_protocol_response)
 
     return client_protocol_response
