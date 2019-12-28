@@ -83,7 +83,12 @@ class Pointer(NDRType):
     structure_size: ClassVar[int] = 4
 
     @classmethod
-    def from_bytes(cls, data: bytes) -> Pointer:
+    def from_bytes(cls, data: bytes) -> Union[Pointer, None]:
+
+        referent_id: int = struct_unpack('<I', data[:4])[0]
+        if referent_id == 0:
+            return None
+
         return cls(
             referent_id=struct_unpack('<I', data[:4])[0],
             representation=data[4:]
