@@ -129,3 +129,6 @@ class UnidimensionalConformantArray(NDRType):
             struct_pack('<I', len(self.representation)),
             b''.join(bytes(element) for element in self.representation)
         ])
+
+    def __len__(self) -> int:
+        return len(self.__bytes__())
