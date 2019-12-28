@@ -108,6 +108,7 @@ class NullPointer(Pointer):
 
 @dataclass
 class UnidimensionalConformantArray(NDRType):
+    STRUCTURE_SIZE: ClassVar[int] = 4
     representation: Tuple[Union[NDRType, bytes], ...]
 
     @classmethod
