@@ -83,11 +83,11 @@ class Pointer(NDRType):
     structure_size: ClassVar[int] = 4
 
     @classmethod
-    def from_bytes(cls, data: bytes) -> Union[Pointer, None]:
+    def from_bytes(cls, data: bytes) -> Pointer:
 
         referent_id: int = struct_unpack('<I', data[:4])[0]
         if referent_id == 0:
-            return None
+            return NullPointer()
 
         return cls(
             referent_id=struct_unpack('<I', data[:4])[0],
@@ -96,3 +96,10 @@ class Pointer(NDRType):
 
     def __bytes__(self) -> bytes:
         return struct_pack('<I', self.referent_id) + bytes(self.representation)
+
+
+# TODO: I want this to be a singleton...
+class NullPointer(Pointer):
+    def __init__(self):
+        self.representation = b''
+        self.referent_id = 0
