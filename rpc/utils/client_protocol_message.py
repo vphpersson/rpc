@@ -2,12 +2,19 @@ from __future__ import annotations
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from enum import IntEnum
-from typing import Dict, Type, ClassVar
+from typing import Dict, Type, ClassVar, Optional
+from contextlib import suppress
 
 from rpc.connection import Connection as RPCConnection
 from rpc.pdu_headers.base import MSRPCHeader
 from rpc.pdu_headers.request_header import RequestHeader
 from rpc.pdu_headers.response_header import ResponseHeader
+
+
+class NoMatchingErrorClassError(Exception):
+    def __init__(self, return_code: IntEnum):
+        super().__init__(f'The return code {return_code} does not map to any error class.')
+        self.return_code = return_code
 
 
 class ClientProtocolMessage(ABC):
@@ -44,7 +51,10 @@ class ClientProtocolResponseError(Exception, ABC):
 
     @classmethod
     def from_response(cls, response: ClientProtocolResponseBase) -> ClientProtocolResponseError:
-        return cls.RETURN_CODE_TO_ERROR_CLASS[response.return_code](response=response)
+        try:
+            return cls.RETURN_CODE_TO_ERROR_CLASS[response.return_code](response=response)
+        except KeyError as e:
+            raise NoMatchingErrorClassError(return_code=response.return_code) from e
 
 
 async def obtain_response(
@@ -79,8 +89,12 @@ async def obtain_response(
         # TODO: Use proper exception
         raise ValueError
 
-    # NOTE: It seems that I must use the integer value of the return code to have this function be general.
-    if client_protocol_response.return_code.value != 0 and raise_exception:
-        raise client_protocol_response.ERROR_CLASS.from_response(response=client_protocol_response)
+    response_error: Optional[ClientProtocolResponseError] = None
+    # Only return codes indicating errors map to an error class. Return codes for successes result in a lookup error.
+    with suppress(NoMatchingErrorClassError):
+        response_error = client_protocol_response.ERROR_CLASS.from_response(response=client_protocol_response)
+
+    if raise_exception and response_error is not None:
+        raise response_error
 
     return client_protocol_response
