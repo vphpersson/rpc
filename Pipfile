@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+msdsalgs = {file = "https://github.com/vphpersson/msdsalgs/tarball/master"}
 
 [requires]
 python_version = "3.8"
