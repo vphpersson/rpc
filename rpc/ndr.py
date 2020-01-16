@@ -23,6 +23,9 @@ class NDRType(ABC):
 
 # TODO: The string encoding should be whatever the data representation format label says, no?
 class ConformantVaryingString(NDRType):
+
+    STRUCTURE_SIZE: Final[int] = 12
+
     def __init__(self, representation: str = '', offset: int = 0, maximum_count: Optional[int] = None):
         self.representation: str = representation
         self.offset: int = offset
@@ -46,6 +49,7 @@ class ConformantVaryingString(NDRType):
         actual_count: int = struct_unpack('<I', data[8:12])[0]
 
         # TODO: I don't know why the elements are of size 2 -- figure out?
+        # TODO: `str.rstrip` is not right -- only one null character should be removed!
         return cls(
             representation=data[12:12+2*actual_count].decode(encoding='utf-16-le').rstrip('\x00'),
             offset=struct_unpack('<I', data[4:8])[0],
