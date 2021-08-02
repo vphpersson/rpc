@@ -2,9 +2,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import ClassVar, Tuple, List
 from struct import pack as struct_pack, unpack as struct_unpack
+from uuid import UUID
 
 from rpc.structures.presentation_syntax import PresentationSyntax
-from rpc.ndr import NDR_PRESENTATION_SYNTAX
+
+
+NDR_PRESENTATION_SYNTAX = PresentationSyntax(if_uuid=UUID('8a885d04-1ceb-11c9-9fe8-08002b104860'), if_version=2)
 
 
 @dataclass
