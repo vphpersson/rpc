@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from enum import IntEnum
 from typing import Type, ClassVar, Optional
 from contextlib import suppress
+from struct import Struct
 
 from msdsalgs.win32_error import Win32Error, Win32ErrorCode
 
@@ -33,6 +34,8 @@ class ClientProtocolRequestBase(ClientProtocolMessage, ABC):
 class ClientProtocolResponseBase(ClientProtocolMessage, ABC):
     REQUEST_CLASS: ClassVar[Type[ClientProtocolRequestBase]] = NotImplemented
     return_code: Win32ErrorCode
+
+    _RETURN_CODE_STRUCT: ClassVar[Struct] = Struct('<I')
 
 
 async def obtain_response(
