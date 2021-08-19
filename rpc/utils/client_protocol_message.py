@@ -1,8 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from abc import ABC, abstractmethod
+from abc import ABC
 from enum import IntEnum
-from typing import Type, ClassVar, Optional
+from typing import Type, ClassVar, Optional, Union, ByteString, Any
 from contextlib import suppress
 from struct import Struct
 
@@ -12,17 +12,28 @@ from rpc.connection import Connection as RPCConnection
 from rpc.pdu_headers.base import MSRPCHeader
 from rpc.pdu_headers.request_header import RequestHeader
 from rpc.pdu_headers.response_header import ResponseHeader
+from rpc.utils import unpack_structure, pack_structure
 
 
 class ClientProtocolMessage(ABC):
-    @abstractmethod
+
     def __bytes__(self) -> bytes:
-        raise NotImplementedError
+        if structure := getattr(self, '_STRUCTURE', None):
+            return pack_structure(instance=self, structure=structure)
+        else:
+            raise NotImplementedError
 
     @classmethod
-    @abstractmethod
-    def from_bytes(cls, data: bytes) -> ClientProtocolMessage:
-        raise NotImplementedError
+    def from_bytes(cls, data: Union[ByteString, memoryview], offset: int = 0) -> ClientProtocolMessage:
+
+        if structure := getattr(cls, '_STRUCTURE', None):
+            cls_kwargs: dict[str, Any] = unpack_structure(data=data, structure=structure, offset=offset)
+            delete_keys = [kwarg_name for kwarg_name in cls_kwargs if kwarg_name.startswith('__')]
+            for delete_key in delete_keys:
+                del cls_kwargs[delete_key]
+            return cls(**cls_kwargs)
+        else:
+            raise NotImplementedError
 
 
 class ClientProtocolRequestBase(ClientProtocolMessage, ABC):
