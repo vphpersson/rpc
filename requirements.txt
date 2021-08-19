@@ -1,1 +1,2 @@
 -e git+ssh://git@github.com/vphpersson/msdsalgs.git#egg=msdsalgs
+-e git+ssh://git@github.com/vphpersson/ndr.git#egg=ndr
