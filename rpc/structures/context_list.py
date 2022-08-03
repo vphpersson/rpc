@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Final, Iterable, List
+from typing import Final, Iterable
 from struct import pack as struct_pack, unpack as struct_unpack
 
 from rpc.structures.context_element import ContextElement
@@ -29,7 +29,7 @@ class ContextList(list):
     def from_bytes(cls, data: bytes) -> ContextList:
         n_context_elem: int = struct_unpack('<B', data[:1])[0]
 
-        context_elements: List[ContextElement] = []
+        context_elements: list[ContextElement] = []
         offset = 4
         for i in range(n_context_elem):
             context_element = ContextElement.from_bytes(data[offset:])

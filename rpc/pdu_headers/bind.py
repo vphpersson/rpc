@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, ClassVar, Dict, Any
+from typing import ClassVar, Any
 from struct import unpack as struct_unpack, pack as struct_pack
 
 from rpc.pdu_headers.base import MSRPCHeader, register_pdu_header
@@ -18,7 +18,7 @@ class BindHeader(MSRPCHeader):
     assoc_group_id: int = 0
     max_xmit_frag: int = 4280
     max_recv_frag: int = 4280
-    auth_verifier: Optional[AuthVerifier] = None
+    auth_verifier: AuthVerifier | None = None
 
     @property
     def frag_length(self) -> int:
@@ -34,7 +34,7 @@ class BindHeader(MSRPCHeader):
 
     # TODO: Add type.
     @classmethod
-    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, Any]):
+    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: dict[str, Any]):
 
         header_specific_data = data[MSRPCHeader.structure_size:]
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import ClassVar, Optional, Dict, Any
+from typing import ClassVar, Any
 from struct import pack as struct_pack, unpack as struct_unpack
 
 from rpc.pdu_headers.base import MSRPCHeader, register_pdu_header
@@ -18,9 +18,9 @@ class BindAckHeader(MSRPCHeader):
     max_xmit_frag: int = 4280
     max_recv_frag: int = 4280
     assoc_group_id: int = 0
-    result_list: ResultList = field(default_factory=ResultList())
-    sec_addr: Optional[PortAny] = None
-    auth_verifier: Optional[AuthVerifier] = None
+    result_list: ResultList = field(default_factory=ResultList)
+    sec_addr: PortAny | None = None
+    auth_verifier: AuthVerifier | None = None
 
     @property
     def frag_length(self) -> int:
@@ -45,7 +45,7 @@ class BindAckHeader(MSRPCHeader):
         return len(self.auth_verifier) if self.auth_verifier is not None else 0
 
     @classmethod
-    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, Any]):
+    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: dict[str, Any]):
 
         header_specific_data = data[MSRPCHeader.structure_size:]
 

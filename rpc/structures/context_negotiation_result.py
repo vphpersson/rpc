@@ -2,7 +2,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from struct import unpack as struct_unpack, pack as struct_pack
 from enum import IntEnum
-from typing import Optional
 
 from rpc.structures.presentation_syntax import PresentationSyntax
 
@@ -24,7 +23,7 @@ class ProviderReason(IntEnum):
 class ContextNegotiationResult:
     result: ContDefResult
     reason: ProviderReason
-    transfer_syntax: Optional[PresentationSyntax]
+    transfer_syntax: PresentationSyntax | None
 
     def __len__(self) -> int:
         return 4 + (self.transfer_syntax.struture_size if self.transfer_syntax is not None else 0)

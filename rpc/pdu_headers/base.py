@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Dict, Union, Type, Any
+from typing import ClassVar, Type, Any
 from abc import ABC, abstractmethod
 from struct import unpack as struct_unpack, pack as struct_pack
 
@@ -13,7 +13,7 @@ from rpc.structures.data_representation_format import DataRepresentationFormat, 
 @dataclass
 class MSRPCHeader(ABC):
     pdu_type: ClassVar[PDUType] = NotImplemented
-    pdu_type_to_class: ClassVar[Dict[PDUType, Type[MSRPCHeader]]] = {}
+    pdu_type_to_class: ClassVar[dict[PDUType, Type[MSRPCHeader]]] = {}
     structure_size: ClassVar[int] = 16
 
     rpc_vers: int = 5
@@ -27,7 +27,7 @@ class MSRPCHeader(ABC):
     call_id: int = 0
 
     @staticmethod
-    def _from_bytes(data: bytes) -> Dict[str, Union[int, PDUType, PfcFlag, DataRepresentationFormat]]:
+    def _from_bytes(data: bytes) -> dict[str, int | PDUType | PfcFlag | DataRepresentationFormat]:
         return dict(
             rpc_vers=data[0],
             rpc_vers_minor=data[1],
@@ -63,7 +63,7 @@ class MSRPCHeader(ABC):
         ])
 
     @abstractmethod
-    def _from_bytes_and_parameters(self, data: bytes, base_parameters: Dict[str, Any]):
+    def _from_bytes_and_parameters(self, data: bytes, base_parameters: dict[str, Any]):
         raise NotImplementedError
 
     # TODO: Use dict method to find proper subtype.
@@ -76,7 +76,7 @@ class MSRPCHeader(ABC):
         from rpc.pdu_headers.request_header import RequestHeader
         from rpc.pdu_headers.response_header import ResponseHeader
 
-        base_parameters: Dict[str, Union[int, PDUType, PfcFlag, DataRepresentationFormat]] = cls._from_bytes(
+        base_parameters: dict[str, int | PDUType | PfcFlag, DataRepresentationFormat] = cls._from_bytes(
             data=data
         )
         pdu_type = base_parameters.pop('pdu_type')
