@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Optional, Dict, Any
+from typing import ClassVar, Any
 from uuid import UUID
 from struct import unpack as struct_unpack, pack as struct_pack
 
@@ -19,9 +19,9 @@ class RequestHeader(MSRPCHeader):
     alloc_hint: int = 0
     context_id: int = 0
     opnum: int = 0
-    object_uuid: Optional[UUID] = None
+    object_uuid: UUID | None = None
     stub_data: bytes = b''
-    auth_verifier: Optional[AuthVerifier] = None
+    auth_verifier: AuthVerifier | None = None
 
     @property
     def frag_length(self) -> int:
@@ -37,7 +37,7 @@ class RequestHeader(MSRPCHeader):
         return len(self.auth_verifier) if self.auth_verifier is not None else 0
 
     @classmethod
-    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, Any]) -> RequestHeader:
+    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: dict[str, Any]) -> RequestHeader:
 
         header_specific_data = data[MSRPCHeader.structure_size:]
 

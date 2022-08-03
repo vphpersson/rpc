@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from abc import ABC
 from enum import IntEnum
-from typing import Type, ClassVar, Optional, Union, ByteString, Any
+from typing import Type, ClassVar, ByteString, Any
 from contextlib import suppress
 from struct import Struct
 
@@ -24,7 +24,7 @@ class ClientProtocolMessage(ABC):
             raise NotImplementedError
 
     @classmethod
-    def from_bytes(cls, data: Union[ByteString, memoryview], offset: int = 0) -> ClientProtocolMessage:
+    def from_bytes(cls, data: ByteString | memoryview, offset: int = 0) -> ClientProtocolMessage:
 
         if structure := getattr(cls, '_STRUCTURE', None):
             cls_kwargs: dict[str, Any] = unpack_structure(data=data, structure=structure, offset=offset)
@@ -81,7 +81,7 @@ async def obtain_response(
         # TODO: Use proper exception
         raise ValueError
 
-    response_error: Optional[Win32Error] = None
+    response_error: Win32Error | None = None
     # Only return codes indicating errors map to an error class. Return codes for successes result in a lookup error.
     with suppress(KeyError):
         response_error = Win32Error.from_win32_error_code(

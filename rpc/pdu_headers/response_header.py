@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Optional, Dict, Any
+from typing import ClassVar, Any
 from struct import unpack as struct_unpack, pack as struct_pack
 
 from rpc.pdu_headers.base import MSRPCHeader, register_pdu_header
@@ -19,7 +19,7 @@ class ResponseHeader(MSRPCHeader):
     context_id: int = 0
     cancel_count: int = 0
     stub_data: bytes = b''
-    auth_verifier: Optional[AuthVerifier] = None
+    auth_verifier: AuthVerifier | None = None
 
     @property
     def frag_length(self) -> int:
@@ -34,7 +34,7 @@ class ResponseHeader(MSRPCHeader):
         return len(self.auth_verifier) if self.auth_verifier is not None else 0
 
     @classmethod
-    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: Dict[str, Any]) -> ResponseHeader:
+    def _from_bytes_and_parameters(cls, data: bytes, base_parameters: dict[str, Any]) -> ResponseHeader:
 
         header_specific_data = data[MSRPCHeader.structure_size:]
 

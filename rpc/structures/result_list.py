@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Final, Iterable, List
+from typing import Final, Iterable
 from struct import unpack as struct_unpack, pack as struct_pack
 
 from rpc.structures.context_negotiation_result import ContextNegotiationResult
@@ -28,7 +28,7 @@ class ResultList(list):
     def from_bytes(cls, data: bytes) -> ResultList:
         n_results: int = struct_unpack('<B', data[:1])[0]
 
-        results: List[ContextNegotiationResult] = []
+        results: list[ContextNegotiationResult] = []
         offset = 4
         for i in range(n_results):
             result = ContextNegotiationResult.from_bytes(data=data[offset:])

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import ClassVar, Tuple, List
+from typing import ClassVar
 from struct import pack as struct_pack, unpack as struct_unpack
 from uuid import UUID
 
@@ -17,7 +17,7 @@ class ContextElement:
 
     context_id: int
     abstract_syntax: PresentationSyntax
-    transfer_syntaxes: Tuple[PresentationSyntax, ...] = (NDR_PRESENTATION_SYNTAX, )
+    transfer_syntaxes: tuple[PresentationSyntax, ...] = (NDR_PRESENTATION_SYNTAX,)
 
     @property
     def n_transfer_syn(self) -> int:
@@ -38,7 +38,7 @@ class ContextElement:
     @classmethod
     def from_bytes(cls, data: bytes) -> ContextElement:
         n_transfer_syntax: int = struct_unpack('<B', data[2:3])[0]
-        transfer_syntaxes: List[PresentationSyntax] = []
+        transfer_syntaxes: list[PresentationSyntax] = []
         offset = 24
         for i in range(n_transfer_syntax):
             transfer_syntaxes.append(PresentationSyntax.from_bytes(data[offset:offset+20]))

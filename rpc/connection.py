@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Awaitable, Optional, Dict, Iterator
+from typing import Callable, Awaitable, Iterator
 from asyncio import Queue as AsyncioQueue, Task, create_task, Future
 from itertools import count as itertools_count
 
@@ -14,16 +14,16 @@ class Connection:
         self._read: Callable[[], Awaitable[bytes]] = reader
         self._write: Callable[[bytes], Awaitable[int]] = writer
 
-        self._receive_message_responses_task: Optional[Task] = None
-        self._handle_incoming_bytes_task: Optional[Task] = None
-        self._handle_outgoing_bytes_task: Optional[Task] = None
+        self._receive_message_responses_task: Task | None = None
+        self._handle_incoming_bytes_task: Task | None = None
+        self._handle_outgoing_bytes_task: Task | None = None
 
         # Data structures for handling incoming and outgoing messages.
         self._incoming_messages_queue = AsyncioQueue()
         self._outgoing_messages_queue = AsyncioQueue()
 
         self.call_id_iterator: Iterator[int] = itertools_count(start=1)
-        self._outstanding_message_call_id_to_future: Dict[int, Future] = {}
+        self._outstanding_message_call_id_to_future: dict[int, Future] = {}
 
     async def bind(self, presentation_context_list: ContextList, **optional_bind_header_kwargs) -> BindAckHeader:
         """
